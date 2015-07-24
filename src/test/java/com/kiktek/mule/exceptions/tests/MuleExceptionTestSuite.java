@@ -1,6 +1,11 @@
 package com.kiktek.mule.exceptions.tests;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.CountDownLatch;
@@ -14,7 +19,8 @@ import org.mule.context.notification.ExceptionNotification;
 import org.mule.tck.junit4.FunctionalTestCase;
 
 public class MuleExceptionTestSuite extends FunctionalTestCase {
-
+	public static final String ORIGINAL_MESSAGE = "The original message sent";
+	public static final String FINAL_MESSAGE = "default message AND SOME";
 	//test-connectors has in-memory connectors used for testing
 	//mule-exceptions contain actual application flows
 	protected String getConfigResources() {
@@ -41,10 +47,31 @@ public class MuleExceptionTestSuite extends FunctionalTestCase {
 	 */
 	public void testDefaultException() throws Exception{
 		MuleClient client = muleContext.getClient(); //get the mule client
-		client.dispatch("jms://default.in", "default message", null);
+		client.dispatch("jms://default.in", ORIGINAL_MESSAGE, null);
 		MuleMessage message = client.request("jms://default.out", 500 * getTimeoutSystemProperty());//time in milliseconds
 		assertNull(message);//message never gets to the out queue because an error is thrown
 		//@see org.mule.tck.junit4.AbstractMuleTestCase.getTestTimeoutSecs()
 		assertTrue(defaultExceptionLatch.await(getTestTimeoutSecs(), TimeUnit.SECONDS)); //latch counts down in the listener since runtime exception is thrown
+	}
+	
+	@Test
+	/**
+	 * global catch exception. uses catch exception strategy (like a java catch block). <br>
+	 * The message that was being processed in the flow before the exception is lost
+	 */
+	public void testCatchException() throws Exception{
+		MuleClient client = muleContext.getClient(); //get the mule client
+		client.dispatch("jms://catch.in", "default message", null);
+		MuleMessage message = client.request("jms://catch.out", 500 * getTimeoutSystemProperty());//time in milliseconds
+		assertNull(message);//message never gets to the out queue because an error is thrown
+		assertTrue(defaultExceptionLatch.await(getTestTimeoutSecs(), TimeUnit.SECONDS)); //latch counts down in the listener since runtime exception is thrown
+		
+		message = client.request("jms://default.error", 500 * getTimeoutSystemProperty());//time in milliseconds
+		assertNotNull(message); //a message is received on the error queue in the catch block
+		assertThat(ORIGINAL_MESSAGE, not(equalTo(message.getPayloadAsString())));
+		System.out.println("message.getExceptionPayload().getMessage()" + message.getPayloadAsString());
+		assertEquals(FINAL_MESSAGE, message.getPayloadAsString());
+		
+
 	}
 }

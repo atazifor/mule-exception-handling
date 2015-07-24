@@ -29,7 +29,57 @@
 		&lt;notification-listener ref=&quot;uncheckedExceptionListener&quot;/&gt;
 	&lt;/notifications&gt;</content>
     </global-unknown>
-    <flow SubFlow="false" name="default-exception-flow" entity-id="85fc0270-08db-450d-9127-b853b4d751bb">
+    <global-element name="Catch Exception Strategy" type="http://www.mulesoft.org/schema/mule/core/catch-exception-strategy" entity-id="Catch Exception Strategy#1">
+        <properties>
+            <property name=""/>
+            <property name="when"/>
+            <property name="name" value="defaultCatchExceptionStrategy"/>
+            <property name="enableNotifications"/>
+            <property name="auxiliary;index" value="15"/>
+        </properties>
+        <compartment>
+            <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+                <pattern name="Logger" type="http://www.mulesoft.org/schema/mule/core/logger" entity-id="Logger#1">
+                    <graphicalData x="0" y="0" width="0" height="0"/>
+                    <properties>
+                        <property name="message" value="wow #[payload]"/>
+                        <property name="category"/>
+                        <property name="level" value="INFO"/>
+                        <property name="auxiliary;index" value="16"/>
+                    </properties>
+                </pattern>
+                <endpoint direction="Outbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#1">
+                    <graphicalData x="0" y="0" width="0" height="0"/>
+                    <properties>
+                        <property name="topic"/>
+                        <property name="queue" value="default.error"/>
+                        <property name="durableName"/>
+                        <property name="businessEventsLabel"/>
+                        <property name="disableTransportTransformer"/>
+                        <property name="disableTemporaryReplyToDestinations"/>
+                        <property name="exchange-pattern"/>
+                        <property name="tracking:enable-default-events"/>
+                        <property name="ref"/>
+                        <property name="transformer-refs"/>
+                        <property name="address"/>
+                        <property name="encoding"/>
+                        <property name="responseTransformer-refs"/>
+                        <property name="auxiliary;index" value="17"/>
+                        <property name="mimeType"/>
+                        <property name="responseTimeout"/>
+                        <property name="connector-ref" value="jmsConnector"/>
+                    </properties>
+                </endpoint>
+            </lane>
+        </compartment>
+    </global-element>
+    <global-element name="Configuration" type="http://www.mulesoft.org/schema/mule/core/configuration" entity-id="Configuration#1">
+        <properties>
+            <property name="defaultExceptionStrategy-ref" value="defaultCatchExceptionStrategy"/>
+            <property name="auxiliary;index" value="18"/>
+        </properties>
+    </global-element>
+    <flow SubFlow="false" name="default-exception-flow" entity-id="dec1369e-327e-40a5-b8d0-f5722569d622">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -37,9 +87,9 @@
             <property name="tracking:enable-default-events"/>
             <property name="auxiliary;index" value="6"/>
         </properties>
-        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#1">
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#2">
             <graphicalData x="0" y="0" width="0" height="0"/>
-            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#1">
+            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#2">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
                     <property name="topic"/>
@@ -65,7 +115,7 @@
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <content>&lt;test:component xmlns:test=&quot;http://www.mulesoft.org/schema/mule/test&quot; throwException=&quot;true&quot; exceptionToThrow=&quot;java.lang.RuntimeException&quot;/&gt;</content>
             </unknown>
-            <endpoint direction="Outbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#2">
+            <endpoint direction="Outbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#3">
                 <graphicalData x="0" y="0" width="0" height="0"/>
                 <properties>
                     <property name="topic"/>
@@ -82,6 +132,70 @@
                     <property name="encoding"/>
                     <property name="responseTransformer-refs"/>
                     <property name="auxiliary;index" value="9"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="connector-ref" value="jmsConnector"/>
+                </properties>
+            </endpoint>
+        </lane>
+    </flow>
+    <flow SubFlow="false" name="global-catch-exception-flow" entity-id="da79068c-89a1-4f97-bcad-4942914887e7">
+        <properties>
+            <property name="processingStrategy"/>
+            <property name="processingStrategy2"/>
+            <property name="bussinessEventsLabel"/>
+            <property name="tracking:enable-default-events"/>
+            <property name="auxiliary;index" value="10"/>
+        </properties>
+        <lane hadOnlyOneElement="false" index="0" isChoiceOtherwiseLane="false" entity-id="compartment-lane#3">
+            <graphicalData x="0" y="0" width="0" height="0"/>
+            <endpoint direction="Inbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#4">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="topic"/>
+                    <property name="queue" value="catch.in"/>
+                    <property name="durableName"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="disableTemporaryReplyToDestinations"/>
+                    <property name="exchange-pattern"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="address"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="auxiliary;index" value="11"/>
+                    <property name="mimeType"/>
+                    <property name="responseTimeout"/>
+                    <property name="connector-ref" value="jmsConnector"/>
+                </properties>
+            </endpoint>
+            <unknown description="false" index="12" entity-id="unknown#2">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <content>&lt;test:component xmlns:test=&quot;http://www.mulesoft.org/schema/mule/test&quot; appendString=&quot; AND SOME&quot;/&gt;</content>
+            </unknown>
+            <unknown description="false" index="13" entity-id="unknown#3">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <content>&lt;test:component xmlns:test=&quot;http://www.mulesoft.org/schema/mule/test&quot; throwException=&quot;true&quot; exceptionToThrow=&quot;java.lang.RuntimeException&quot;/&gt;</content>
+            </unknown>
+            <endpoint direction="Outbound" message-exchange-pattern="OneWay" name="JMS" type="http://www.mulesoft.org/schema/mule/jms/endpoint" entity-id="JMS#5">
+                <graphicalData x="0" y="0" width="0" height="0"/>
+                <properties>
+                    <property name="topic"/>
+                    <property name="queue" value="catch.out"/>
+                    <property name="durableName"/>
+                    <property name="businessEventsLabel"/>
+                    <property name="disableTransportTransformer"/>
+                    <property name="disableTemporaryReplyToDestinations"/>
+                    <property name="exchange-pattern"/>
+                    <property name="tracking:enable-default-events"/>
+                    <property name="ref"/>
+                    <property name="transformer-refs"/>
+                    <property name="address"/>
+                    <property name="encoding"/>
+                    <property name="responseTransformer-refs"/>
+                    <property name="auxiliary;index" value="14"/>
                     <property name="mimeType"/>
                     <property name="responseTimeout"/>
                     <property name="connector-ref" value="jmsConnector"/>

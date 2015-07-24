@@ -17,4 +17,19 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
         <test:component throwException="true" exceptionToThrow="java.lang.RuntimeException"/>
         <jms:outbound-endpoint connector-ref="jmsConnector" queue="default.out" doc:name="JMS"/>
     </flow>
+    
+    
+    <flow name="global-catch-exception-flow" doc:name="global-catch-exception-flow">
+    	<!-- make sure to add activemq dependency -->
+        <jms:inbound-endpoint connector-ref="jmsConnector" queue="catch.in" doc:name="JMS"/>
+        <test:component appendString=" AND SOME" /> 
+        <test:component throwException="true" exceptionToThrow="java.lang.RuntimeException"/>
+        <jms:outbound-endpoint connector-ref="jmsConnector" queue="catch.out" doc:name="JMS"/>
+    </flow>
+    
+    <catch-exception-strategy name="defaultCatchExceptionStrategy">
+    	<logger level="INFO" message="wow #[payload]" doc:name="Logger"/>
+    	<jms:outbound-endpoint connector-ref="jmsConnector" queue="default.error" doc:name="JMS"/>
+    </catch-exception-strategy>
+    <configuration defaultExceptionStrategy-ref="defaultCatchExceptionStrategy" doc:name="Configuration"/>
 </mule>
