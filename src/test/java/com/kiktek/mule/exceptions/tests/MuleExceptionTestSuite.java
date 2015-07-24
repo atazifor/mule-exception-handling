@@ -35,12 +35,16 @@ public class MuleExceptionTestSuite extends FunctionalTestCase {
 		});
 	}
 	@Test
+	/**
+	 * Default exception: error thrown is logged and the message is not re-processed.
+	 * @throws Exception
+	 */
 	public void testDefaultException() throws Exception{
 		MuleClient client = muleContext.getClient(); //get the mule client
 		client.dispatch("jms://default.in", "default message", null);
 		MuleMessage message = client.request("jms://default.out", 500 * getTimeoutSystemProperty());//time in milliseconds
-		assertNull(message);
+		assertNull(message);//message never gets to the out queue because an error is thrown
 		//@see org.mule.tck.junit4.AbstractMuleTestCase.getTestTimeoutSecs()
-		assertTrue(defaultExceptionLatch.await(getTestTimeoutSecs(), TimeUnit.SECONDS));
+		assertTrue(defaultExceptionLatch.await(getTestTimeoutSecs(), TimeUnit.SECONDS)); //latch counts down in the listener since runtime exception is thrown
 	}
 }
