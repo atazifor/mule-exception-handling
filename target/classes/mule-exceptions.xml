@@ -31,5 +31,6 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
     	<logger level="INFO" message="wow #[payload]" doc:name="Logger"/>
     	<jms:outbound-endpoint connector-ref="jmsConnector" queue="default.error" doc:name="JMS"/>
     </catch-exception-strategy>
+    <!-- global default exception strategy. this will be used instead of Mule's default it references the catch exception strategy, defaultCatchExceptionStrategy-->
     <configuration defaultExceptionStrategy-ref="defaultCatchExceptionStrategy" doc:name="Configuration"/>
 </mule>

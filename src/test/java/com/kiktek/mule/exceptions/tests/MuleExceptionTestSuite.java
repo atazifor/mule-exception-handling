@@ -20,7 +20,7 @@ import org.mule.tck.junit4.FunctionalTestCase;
 
 public class MuleExceptionTestSuite extends FunctionalTestCase {
 	public static final String ORIGINAL_MESSAGE = "The original message sent";
-	public static final String FINAL_MESSAGE = "default message AND SOME";
+	public static final String FINAL_MESSAGE = ORIGINAL_MESSAGE+ " AND SOME";
 	//test-connectors has in-memory connectors used for testing
 	//mule-exceptions contain actual application flows
 	protected String getConfigResources() {
@@ -40,11 +40,12 @@ public class MuleExceptionTestSuite extends FunctionalTestCase {
 			}
 		});
 	}
-	@Test
+	
 	/**
 	 * Default exception: error thrown is logged and the message is not re-processed.
 	 * @throws Exception
 	 */
+	@Test
 	public void testDefaultException() throws Exception{
 		MuleClient client = muleContext.getClient(); //get the mule client
 		client.dispatch("jms://default.in", ORIGINAL_MESSAGE, null);
@@ -54,14 +55,17 @@ public class MuleExceptionTestSuite extends FunctionalTestCase {
 		assertTrue(defaultExceptionLatch.await(getTestTimeoutSecs(), TimeUnit.SECONDS)); //latch counts down in the listener since runtime exception is thrown
 	}
 	
-	@Test
+	
 	/**
-	 * global catch exception. uses catch exception strategy (like a java catch block). <br>
-	 * The message that was being processed in the flow before the exception is lost
+	 * Global default exception strategy must use one of catch, rollback or choice exception strategies
+	 * This implementation of global default exception uses catch exception strategy. <br>
+	 * The message that was being processed in any flow (that does not explicitly have
+	 * a an exception strategy in the flow itself) before an exception occurred is passed to the catch block
 	 */
+	@Test
 	public void testCatchException() throws Exception{
 		MuleClient client = muleContext.getClient(); //get the mule client
-		client.dispatch("jms://catch.in", "default message", null);
+		client.dispatch("jms://catch.in", ORIGINAL_MESSAGE, null);
 		MuleMessage message = client.request("jms://catch.out", 500 * getTimeoutSystemProperty());//time in milliseconds
 		assertNull(message);//message never gets to the out queue because an error is thrown
 		assertTrue(defaultExceptionLatch.await(getTestTimeoutSecs(), TimeUnit.SECONDS)); //latch counts down in the listener since runtime exception is thrown

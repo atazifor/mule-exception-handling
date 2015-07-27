@@ -79,7 +79,7 @@
             <property name="auxiliary;index" value="18"/>
         </properties>
     </global-element>
-    <flow SubFlow="false" name="default-exception-flow" entity-id="dec1369e-327e-40a5-b8d0-f5722569d622">
+    <flow SubFlow="false" name="default-exception-flow" entity-id="0256f142-05b2-49b6-8087-9a0cd6a94950">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
@@ -139,7 +139,7 @@
             </endpoint>
         </lane>
     </flow>
-    <flow SubFlow="false" name="global-catch-exception-flow" entity-id="da79068c-89a1-4f97-bcad-4942914887e7">
+    <flow SubFlow="false" name="global-catch-exception-flow" entity-id="d6e8cb17-8290-46f2-bb27-fc3a00c0f80e">
         <properties>
             <property name="processingStrategy"/>
             <property name="processingStrategy2"/>
